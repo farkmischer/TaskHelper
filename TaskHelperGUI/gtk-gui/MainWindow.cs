@@ -41,8 +41,10 @@ public partial class MainWindow
 
 
 		List<TaskGroup> result = new TestManager().FindAll();
-		this.combobox1.AppendText ("Test");
-
+		foreach (TaskGroup TaskGroup in result) 
+		{
+			this.combobox1.AppendText (TaskGroup.Name);
+		}
 
 
 

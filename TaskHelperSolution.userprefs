@@ -1,6 +1,11 @@
 ﻿<Properties StartupItem="TaskHelperGUI\TaskHelperGUI.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="TaskHelperGUI\gtk-gui\MainWindow.cs">
+    <Files>
+      <File FileName="TaskHelperGUI\MainWindow.cs" Line="8" Column="6" />
+      <File FileName="TaskHelperGUI\gtk-gui\MainWindow.cs" Line="48" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="c:\SQL Lite\TaskHelper\Accessors\TestAccessor.cs" line="14" column="1" />
