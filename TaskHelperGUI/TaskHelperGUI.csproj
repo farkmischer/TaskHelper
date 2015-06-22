@@ -91,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Chinook_Sqlite_AutoIncrementPKs.sqlite">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>
