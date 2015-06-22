@@ -7,38 +7,31 @@ using DataContracts;
 
 namespace Accessors
 {
-    public class TestAccessor
+    public class TaskGroupAccessor
     {
-        public void RunEntityExample()
+		public List<TaskGroup> FindAll()
         {
             using (var context = new ChinookContext())
             {
-                var artists = from a in context.Artists
-                              where a.Name.StartsWith("A")
-                              orderby a.Name
-                              select a;
-				
-                foreach (var artist in artists)
-                {
-                    Console.WriteLine(artist.Name);
-                }
+				return context.TaskGroups.ToList ();
+
             }
 
             // ### Add a db record
-            using (var context = new ChinookContext())
-            {
-                context.Artists.Add(
-                    new Artist
-                    {
-                        Name = "Anberlin",
-                        Albums =
-                        {
-                            new Album { Title = "Cities" },
-                            new Album { Title = "New Surrender" }
-                        }
-                    });
-                context.SaveChanges();
-            }
+            //using (var context = new ChinookContext())
+            //{
+            //    context.Artists.Add(
+            //        new Artist
+            //        {
+            //            Name = "Anberlin",
+            //            Albums =
+            //            {
+            //                new Album { Title = "Cities" },
+            //                new Album { Title = "New Surrender" }
+            //            }
+            //        });
+            //    context.SaveChanges();
+            //}
 
 //            Console.ReadKey();
         }

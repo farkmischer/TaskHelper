@@ -86,5 +86,9 @@
       <Project>{E73BF290-A21C-4FD7-81BF-E1F2BCE3D0DA}</Project>
       <Name>Managers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataContracts\DataContracts.csproj">
+      <Project>{23C9899C-0C30-464C-9220-AE14FB718E22}</Project>
+      <Name>DataContracts</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

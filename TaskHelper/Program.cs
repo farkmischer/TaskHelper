@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SqlLiteTest.HelloWorld;
 using Managers;
+using DataContracts;
 
 namespace SqlLiteTest
 {
@@ -15,7 +16,7 @@ namespace SqlLiteTest
         {
             //BasicCrud.Run();
 
-			new TestManager().RunEntityExample();
+			List<TaskGroup> results = new TestManager().FindAll();
 
 			Console.WriteLine("Successful Run");
 

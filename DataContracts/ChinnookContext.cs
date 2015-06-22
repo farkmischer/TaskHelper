@@ -10,8 +10,8 @@ namespace DataContracts
 {
     public class ChinookContext : DbContext
     {
-        public DbSet<Artist> Artists { get; set; }
-        public DbSet<Album> Albums { get; set; }
+        public DbSet<TaskGroup> TaskGroups { get; set; }
+        public DbSet<Task> Tasks { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

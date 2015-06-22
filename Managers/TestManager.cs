@@ -1,14 +1,16 @@
 ﻿using System;
 using Accessors;
+using DataContracts;
+using System.Collections.Generic;
 
 namespace Managers
 {
 	public class TestManager
 	{
-		public void RunEntityExample ()
+		public List<TaskGroup> FindAll ()
 		{
 			Console.WriteLine ("Manager");
-			new TestAccessor().RunEntityExample();
+			return new TaskGroupAccessor().FindAll();
 		}
 	}
 }
