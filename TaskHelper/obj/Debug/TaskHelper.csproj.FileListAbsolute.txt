@@ -25,11 +25,13 @@ C:\SQL Lite\TaskHelper\TaskHelper\bin\Debug\normnfkd.nlp
 C:\SQL Lite\TaskHelper\TaskHelper\obj\Debug\TaskHelper.csprojResolveAssemblyReference.cache
 C:\SQL Lite\TaskHelper\TaskHelper\obj\Debug\TaskHelper.exe
 C:\SQL Lite\TaskHelper\TaskHelper\obj\Debug\TaskHelper.pdb
+C:\GitHub\TaskHelper\TaskHelper\obj\Debug\TaskHelper.csprojResolveAssemblyReference.cache
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\x64\SQLite.Interop.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\x86\SQLite.Interop.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\TaskHelper.exe.config
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\TaskHelper.exe
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\TaskHelper.pdb
+C:\GitHub\TaskHelper\TaskHelper\bin\Debug\DataContracts.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\EntityFramework.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\EntityFramework.SqlServer.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\Managers.dll
@@ -37,17 +39,15 @@ C:\GitHub\TaskHelper\TaskHelper\bin\Debug\mscorlib.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\System.Data.SQLite.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\System.Data.SQLite.Linq.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\Accessors.dll
-C:\GitHub\TaskHelper\TaskHelper\bin\Debug\DataContracts.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\Managers.pdb
+C:\GitHub\TaskHelper\TaskHelper\bin\Debug\DataContracts.pdb
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\EntityFramework.SqlServer.xml
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\EntityFramework.xml
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\Accessors.pdb
-C:\GitHub\TaskHelper\TaskHelper\bin\Debug\DataContracts.pdb
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\normidna.nlp
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\normnfc.nlp
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\normnfd.nlp
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\normnfkc.nlp
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\normnfkd.nlp
-C:\GitHub\TaskHelper\TaskHelper\obj\Debug\TaskHelper.csprojResolveAssemblyReference.cache
 C:\GitHub\TaskHelper\TaskHelper\obj\Debug\TaskHelper.exe
 C:\GitHub\TaskHelper\TaskHelper\obj\Debug\TaskHelper.pdb

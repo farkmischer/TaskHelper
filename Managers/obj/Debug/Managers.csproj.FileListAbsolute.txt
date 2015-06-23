@@ -22,8 +22,8 @@ C:\GitHub\TaskHelper\Managers\bin\Debug\x86\SQLite.Interop.dll
 C:\GitHub\TaskHelper\Managers\bin\Debug\Managers.dll
 C:\GitHub\TaskHelper\Managers\bin\Debug\Managers.pdb
 C:\GitHub\TaskHelper\Managers\bin\Debug\Accessors.dll
-C:\GitHub\TaskHelper\Managers\bin\Debug\mscorlib.dll
 C:\GitHub\TaskHelper\Managers\bin\Debug\DataContracts.dll
+C:\GitHub\TaskHelper\Managers\bin\Debug\mscorlib.dll
 C:\GitHub\TaskHelper\Managers\bin\Debug\EntityFramework.dll
 C:\GitHub\TaskHelper\Managers\bin\Debug\Accessors.pdb
 C:\GitHub\TaskHelper\Managers\bin\Debug\DataContracts.pdb

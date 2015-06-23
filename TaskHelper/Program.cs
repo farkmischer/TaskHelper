@@ -16,7 +16,7 @@ namespace SqlLiteTest
         {
             //BasicCrud.Run();
 
-			List<TaskGroup> results = new TestManager().FindAll();
+			List<TaskGroup> results = new TaskGroupManager().FindAll();
 
 			Console.WriteLine("Successful Run");
 
