@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Managers
 {
-	public class TestManager
+	public class TaskGroupManager
 	{
 		public List<TaskGroup> FindAll ()
 		{

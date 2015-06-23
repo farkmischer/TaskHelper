@@ -1,17 +1,17 @@
 ﻿<Properties StartupItem="TaskHelperGUI\TaskHelperGUI.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="c:\GitHub\TaskHelper\Accessors\TestAccessor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TaskHelperGUI\App.config">
     <Files>
       <File FileName="TaskHelperGUI\MainWindow.cs" Line="1" Column="1" />
-      <File FileName="TaskHelperGUI\gtk-gui\MainWindow.cs" Line="43" Column="47" />
-      <File FileName="Managers\TestManager.cs" Line="13" Column="39" />
+      <File FileName="TaskHelperGUI\gtk-gui\MainWindow.cs" Line="1" Column="1" />
+      <File FileName="Managers\TestManager.cs" Line="1" Column="1" />
       <File FileName="c:\GitHub\TaskHelper\Accessors\TestAccessor.cs" Line="16" Column="1" />
+      <File FileName="TaskHelperGUI\App.config" Line="22" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="c:\SQL Lite\TaskHelper\Accessors\TestAccessor.cs" line="14" column="1" />
-      <Breakpoint file="c:\GitHub\TaskHelper\Accessors\TestAccessor.cs" line="16" column="16" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

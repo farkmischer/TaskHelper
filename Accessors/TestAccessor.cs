@@ -14,7 +14,6 @@ namespace Accessors
             using (var context = new ChinookContext())
             {
 				return context.TaskGroups.ToList ();
-
             }
 
             // ### Add a db record

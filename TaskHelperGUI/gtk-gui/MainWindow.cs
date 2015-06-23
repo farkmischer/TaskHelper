@@ -38,17 +38,11 @@ public partial class MainWindow
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 
+		List<TaskGroup> Groups = new TaskGroupManager().FindAll ();
 
-
-		List<TaskGroup> result = new TestManager().FindAll();
-		foreach (TaskGroup TaskGroup in result) 
+		foreach (TaskGroup group in Groups) 
 		{
-			this.combobox1.AppendText (TaskGroup.Name);
+			this.combobox1.AppendText (group.Name);
 		}
-
-
-
-
-
 	}
 }

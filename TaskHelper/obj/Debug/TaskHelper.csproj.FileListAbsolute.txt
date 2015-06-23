@@ -25,7 +25,6 @@ C:\SQL Lite\TaskHelper\TaskHelper\bin\Debug\normnfkd.nlp
 C:\SQL Lite\TaskHelper\TaskHelper\obj\Debug\TaskHelper.csprojResolveAssemblyReference.cache
 C:\SQL Lite\TaskHelper\TaskHelper\obj\Debug\TaskHelper.exe
 C:\SQL Lite\TaskHelper\TaskHelper\obj\Debug\TaskHelper.pdb
-C:\GitHub\TaskHelper\TaskHelper\bin\Debug\Chinook_Sqlite_AutoIncrementPKs.sqlite
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\x64\SQLite.Interop.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\x86\SQLite.Interop.dll
 C:\GitHub\TaskHelper\TaskHelper\bin\Debug\TaskHelper.exe.config
