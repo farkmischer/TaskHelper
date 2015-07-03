@@ -136,10 +136,11 @@ public partial class MainWindow
 		Button button = new Button("Start/Done");
 		button.WidthRequest = 800;
 		button.Name = TaskName;
-		button.Clicked += callback;
+		button.Clicked += TaskStartDoneButtonClicked;
 
 		//if(useExpander) {
-			Expander expander = new Expander(TaskName);
+
+		Expander expander = new Expander(TaskName);
 
 		expander.Add(button);
 
@@ -167,7 +168,7 @@ public partial class MainWindow
 	}
 
 	/* Our usual callback function */
-	static void callback( object obj, EventArgs args)
+	static void TaskStartDoneButtonClicked( object obj, EventArgs args)
 	{
 		Button button = (Button)obj;
 		Console.WriteLine("Hello again - cool button was pressed" + button.Name);
