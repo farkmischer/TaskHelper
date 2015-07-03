@@ -59,6 +59,8 @@
     <Compile Include="SQLiteConfiguration.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="TaskGroup.cs" />
+    <Compile Include="Task.cs" />
+    <Compile Include="TaskRunHistory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
