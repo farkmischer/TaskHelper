@@ -11,7 +11,7 @@ namespace Accessors
     {
 		public List<TaskGroup> FindAll()
         {
-            using (var context = new ChinookContext())
+            using (var context = new TaskDatabaseContext())
             {
 				return context.TaskGroups.ToList ();
             }

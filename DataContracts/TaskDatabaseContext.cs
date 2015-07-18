@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace DataContracts
 {
-    public class ChinookContext : DbContext
+    public class TaskDatabaseContext : DbContext
     {
         public DbSet<TaskGroup> TaskGroups { get; set; }
         public DbSet<Task> Tasks { get; set; }
+		public DbSet<TaskRunHistory> TaskRunHistories { get; set; }
+		public DbSet<TaskRunGroupHistory> TaskRunGroupHistories { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

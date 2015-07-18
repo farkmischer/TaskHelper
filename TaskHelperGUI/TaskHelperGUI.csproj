@@ -61,6 +61,7 @@
     <Reference Include="System.Data.SQLite.Linq">
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.88\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Speech" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -83,6 +84,10 @@
     <ProjectReference Include="..\DataContracts\DataContracts.csproj">
       <Project>{23C9899C-0C30-464C-9220-AE14FB718E22}</Project>
       <Name>DataContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Accessors\Accessors.csproj">
+      <Project>{23C9899C-0C30-464C-9220-AE14FB718E20}</Project>
+      <Name>Accessors</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

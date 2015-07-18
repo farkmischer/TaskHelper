@@ -1,8 +1,11 @@
 ﻿<Properties StartupItem="TaskHelperGUI\TaskHelperGUI.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TaskHelper\Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TaskHelperGUI\gtk-gui\MainWindow.cs">
     <Files>
-      <File FileName="TaskHelper\Program.cs" Line="27" Column="1" />
+      <File FileName="TaskHelperGUI\MainWindow.cs" Line="8" Column="5" />
+      <File FileName="TaskHelperGUI\gtk-gui\MainWindow.cs" Line="382" Column="21" />
+      <File FileName="Accessors\TaskRunHistoryAccessor.cs" Line="89" Column="1" />
+      <File FileName="Managers\TaskRunHistoryManager.cs" Line="35" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

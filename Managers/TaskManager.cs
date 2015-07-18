@@ -17,6 +17,17 @@ namespace Managers
 		{
 			return new TaskAccessor ().FindByTaskGroup (TaskGroupId);
 		}
+
+//		public void CompleteTask(int TaskId)
+//		{
+//			Task task = new TaskAccessor ().Find (TaskId);
+//
+//			task.Duration = 100;
+//
+//			new TaskAccessor ().Save (task);
+//
+//
+//		}
 	}
 }
 

@@ -6,23 +6,68 @@ using System.Collections.Generic;
 using Gtk;
 using System;
 using Gdk;
+using Accessors;
+using System.Media;
+using System.Diagnostics;
+using System.Threading;
+using System.Timers;
+using System.Speech.Synthesis;
+
 
 public partial class MainWindow
 {
+
+	//const int Interval = 1000; //ms Event fireing
+	const int TimerInterval = 1000; //ms Event fireing
+	const int SoundInterval = 10000; //ms Event fireing
+
+	System.Timers.Timer TIMER; //Fireing Event handler.
+	System.Timers.Timer SoundTimer; //Fireing Event handler.
+	//int TotalCycles = 0; //Number of times the event is fired.
+	//int Calcs_per_cycle = 100; // Number of calcs per Event.
+
+
 	private global::Gtk.VBox vbox1;
 
 	//private global::Gtk.VBox vboxWithExpander;
 	
 	private global::Gtk.ComboBox combobox1;
+
+	private global::Gtk.HBox TopHBox;
+
+
+	private global::Gtk.HBox TimerHBox;
+
+	private global::Gtk.Label TimerLabel;
+
+
+	private global::Gtk.Button StartCancelButton;
 	
-	private global::Gtk.HBox hbox1;
+	//private global::Gtk.HBox hbox1;
 	
 	//private global::Gtk.Expander expander3;
 	
 	//private global::Gtk.Label GtkLabel1;
 
+	//private bool TaskGroupCurrentlyRunning;
+
+	private DateTime TaskStarted;
+
+	private TimeSpan GroupDuration = new TimeSpan(0, 30, 0);
+
+	private TaskRunHistory CurrentTaskRunHistory;
+
+	private DateTime FinalCompletionDateTime;
+
+	private SpeechSynthesizerManager SpeechSynthesizerManager;
+
+	private bool WarningPlayed;
+
 	protected virtual void Build ()
 	{
+
+		SpeechSynthesizerManager = new SpeechSynthesizerManager ();
+
 		global::Stetic.Gui.Initialize (this);
 		// Widget MainWindow
 		this.Name = "MainWindow";
@@ -32,14 +77,43 @@ public partial class MainWindow
 		this.vbox1 = new global::Gtk.VBox ();
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
+
+		this.TopHBox = new HBox ();
+		this.TimerHBox = new HBox ();
+
+
+
+		this.TimerLabel = new Label ();
+		this.TimerLabel.Text = "Time Elapsed";
+		this.TimerLabel.HeightRequest = 50;
+		this.TimerHBox.Add (this.TimerLabel);
+		this.vbox1.Add (TimerHBox);
+
+		global::Gtk.Box.BoxChild TimerBoxChild = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.TimerHBox]));
+		TimerBoxChild.Position = 0;
+		TimerBoxChild.Expand = false;
+		TimerBoxChild.Fill = false;
+
+
+
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.combobox1 = global::Gtk.ComboBox.NewText ();
 		this.combobox1.Name = "combobox1";
-		this.vbox1.Add (this.combobox1);
-		global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.combobox1]));
-		w1.Position = 0;
+		this.combobox1.Changed += ComboBoxChangedEvent;
+		this.TopHBox.Add (this.combobox1);
+
+		this.StartCancelButton = new Button ();
+		this.StartCancelButton.Label = "Start Task Group";
+		this.StartCancelButton.Clicked += StartCancelButtonClicked;
+		this.TopHBox.Add (StartCancelButton);
+
+		this.vbox1.Add (TopHBox);
+
+		global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.TopHBox]));
+		w1.Position = 1;
 		w1.Expand = false;
 		w1.Fill = false;
+
 
 
 		// Container child vbox1.Gtk.Box+BoxChild
@@ -67,12 +141,9 @@ public partial class MainWindow
 
 		//for(int i=0; i<32; ++i)
 
-		List<Task> Tasks = new TaskManager().FindAll ();
-		foreach (Task task in Tasks) 
-		{
-			//vboxWithExpander.PackStart (createTaskExpander (task.Name, "Short Description"), false, false, 0);
-			vbox1.PackStart (createTaskExpander (task.Name, "Short Description"), false, false, 0);
-		}
+
+
+
 		//this.vboxWithExpander.Add (this.expander3);
 
 
@@ -81,9 +152,10 @@ public partial class MainWindow
 		//w2.Position = 0;
 		//w2.Expand = false;
 		//w2.Fill = false;
-		this.vbox1.Add (this.hbox1);
-		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
-		w3.Position = 1;
+
+		//this.vbox1.Add (this.hbox1);
+		//global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
+		//w3.Position = 1;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
@@ -93,13 +165,9 @@ public partial class MainWindow
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 
+		FillTaskGroupComboBox (this.combobox1);
 
 
-		List<TaskGroup> Groups = new TaskGroupManager().FindAll ();
-		foreach (TaskGroup group in Groups) 
-		{
-			this.combobox1.AppendText (group.Name);
-		}
 
 		//List<Task> Tasks = new TaskManager().FindAll ();
 		//foreach (Task task in Tasks) 
@@ -120,8 +188,186 @@ public partial class MainWindow
 		//}
 	}
 
+	private void StartCancelButtonClicked( object obj, EventArgs args)
+	{
+		//int test = this.combobox1.Active;
 
-	private static Widget createTaskExpander(string TaskName, string TaskDescription)
+//		TreeIter tree;
+//			this.combobox1.GetActiveIter (out tree);
+//
+//		Console.WriteLine (tree.UserData.ToString());
+
+		int SelectedTaskGroupId = GetComboBoxSelectedId ();
+
+
+//		var store = (ListStore) combobox1.Model;
+//		foreach (var test3 in store) {
+//			var test4 = test3.ToString ();
+//		}
+
+		if (SelectedTaskGroupId != 0) 
+		{
+			
+
+//			try
+//			{
+//				using (var context = new TaskDatabaseContext())
+//				{
+//					TaskRunGroupHistory group = context.TaskRunGroupHistories.Add(
+//				        new TaskRunGroupHistory
+//				        {
+//							TaskGroupId = SelectedTaskGroupId,
+//							TimeRunStarted = DateTime.Now,
+//				        });
+//
+//					context.SaveChanges();
+//
+//					List<Task> tasks = new TaskAccessor ().FindByTaskGroup (SelectedTaskGroupId);
+//
+//					foreach(Task task in tasks)
+//					{
+//						context.TaskRunHistories.Add(
+//						new TaskRunHistory
+//						{
+//							TaskRunGroupHistoryId = group.Id,
+//							Name = task.Name,
+//							Duration = task.Duration,
+//						});
+//					}
+//
+//					context.SaveChanges();
+//				}
+//			}
+//			catch(Exception ex) 
+//			{
+//				Console.WriteLine ("Error: " + ex.Message);
+//				return;
+//			}
+
+			TaskStarted = DateTime.Now;
+
+			ActionResult<TaskRunGroupHistory> groupHistoryResult = new TaskRunGroupHistoryManager ().Save (
+				new TaskRunGroupHistory () {
+					TaskGroupId = SelectedTaskGroupId,
+					TimeRunStarted = TaskStarted,
+				}
+			);
+
+
+
+			List<Task> Tasks = new TaskManager ().FindByTaskGroup (SelectedTaskGroupId);
+			List<TaskRunHistory> TaskRunHistories = new List<TaskRunHistory> ();
+
+			foreach (Task task in Tasks) {
+				
+				DateTime CalculatedCompletionTime = TaskStarted.AddSeconds (task.SecondsSinceStartOfGroup);
+
+				ActionResult<TaskRunHistory> historyResult = new TaskRunHistoryManager ().Save (
+					new TaskRunHistory () {
+						TaskRunGroupHistoryId = groupHistoryResult.ReturnObject.Id,
+						//SecondsElapsed = task.SecondsElapsed,
+						Name = task.Name,
+							CalculatedCompletionTime = CalculatedCompletionTime,
+					}
+				);
+
+				if (FinalCompletionDateTime < CalculatedCompletionTime) {
+					FinalCompletionDateTime = CalculatedCompletionTime;
+				}
+
+				TaskRunHistories.Add (historyResult.ReturnObject);
+			}
+
+			StartCancelButton.Label = "Cancel";
+			//combobox1.ChildVisible = false;
+			//combobox1.Visible = false;
+			combobox1.Sensitive = false;
+
+			ClearExpander (vbox1);
+
+
+
+			foreach (TaskRunHistory taskRunHistory in TaskRunHistories) 
+			{
+				//vboxWithExpander.PackStart (createTaskExpander (task.Name, "Short Description"), false, false, 0);
+				//vbox1.PackStart (createTaskExpander (task.Id, task.Name, "Short Description"), false, false, 0);
+				vbox1.PackStart(ShowTaskHistoryExpander(taskRunHistory.Id, taskRunHistory.Name, "Short Description"), false, false, 0);
+			}
+
+			ShowButtonForFirstTaskInExpander (vbox1);
+
+			CurrentTaskRunHistory = new TaskRunHistoryAccessor ().FindNextOpenTask (groupHistoryResult.ReturnObject.Id);
+
+			Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
+			TIMER = new System.Timers.Timer();
+			TIMER.Interval = TimerInterval;
+			TIMER.Elapsed += new ElapsedEventHandler(UpdateScreenTimer);
+			TIMER.AutoReset = true;
+			TIMER.Enabled = true; //Start Event Timer
+			//TotalRunTime.Start(); //Start Total Time Stopwatch;
+
+			SoundTimer = new System.Timers.Timer ();
+			SoundTimer.Interval = SoundInterval;
+			SoundTimer.Elapsed += new ElapsedEventHandler (GiveWarnings);
+			SoundTimer.AutoReset = true;
+			SoundTimer.Start ();
+
+
+			//**get the dropdown value
+			//**clear the expander
+			//save the run group history (including start time)
+			//save the run history (including starting the first task)
+			//show the first task expanded
+
+		}
+
+
+
+		//int test1 = 1;
+//		using (var context = new TaskDatabaseContext())
+//		{
+//		    context.TaskRunHistories.Add(
+//		        new TaskRunHistory
+//		        {
+//					
+//		            Name = "Anberlin",
+//		            Albums =
+//		            {
+//		                new Album { Title = "Cities" },
+//		                new Album { Title = "New Surrender" }
+//		            }
+//		        });
+//		    context.SaveChanges();
+//		}
+	}
+
+	private void ClearExpander(VBox VBoxWitExpander)
+	{
+		foreach (Widget w in VBoxWitExpander.AllChildren) 
+		{
+			//Console.WriteLine (w.GetType ().ToString());
+			System.Type type = w.GetType ();
+			if (w.GetType ().Name == "Expander") 
+			{
+				Expander expander = (Expander)w;
+
+				VBoxWitExpander.Remove (expander);
+//				foreach (Widget ExpanderChild in expander) 
+//				{
+//					if(ExpanderChild.GetType().Name == "Button")
+//					{
+//						Button ExpanderButton = (Button)ExpanderChild;
+//						ExpanderButton.Label = TextToShow;
+//					}
+//				}
+				//Console.WriteLine (((Button)w).Label);
+			}
+		}
+	}
+
+	//private Widget createTaskExpander(int TaskId, string TaskName, string TaskDescription)
+	private Widget ShowStockTaskExpander(int TaskId, string TaskName, string TaskDescription)
 	{
 		//bool useExpander = true;
 
@@ -130,19 +376,23 @@ public partial class MainWindow
 		//EventBox StartDoneEventBox = new EventBox ();
 		//Button button = new Button("Start/Done");
 		//button.WidthRequest = 800;
+		//button.HeightRequest = 400;
 		//StartDoneEventBox.Add (button);
 		//StartDoneEventBox.ButtonPressEvent += new ButtonPressEventHandler(ButtonPressHandler);
 
-		Button button = new Button("Start/Done");
-		button.WidthRequest = 800;
-		button.Name = TaskName;
-		button.Clicked += TaskStartDoneButtonClicked;
+//		Button button = new Button("Done");
+//		button.WidthRequest = 800;
+		//button.HeightRequest = 400;
+//		button.Visible = false;
+//		button.Name = TaskId.ToString();
+//		button.Clicked += TaskStartDoneButtonClicked;
 
 		//if(useExpander) {
 
 		Expander expander = new Expander(TaskName);
+		expander.Visible = true;
 
-		expander.Add(button);
+		//expander.Add(button);
 
 			return expander;
 		//} else {
@@ -150,7 +400,40 @@ public partial class MainWindow
 		//}
 	}
 
-	private static void ButtonPressHandler(object obj, ButtonPressEventArgs args) 
+	private Widget ShowTaskHistoryExpander(int TaskId, string TaskName, string TaskDescription)
+	{
+		//bool useExpander = true;
+
+		//eventbox1.GdkWindow.Events = eventbox1.GdkWindow.Events | Gdk.EventMask.ButtonPressMask;
+
+		//EventBox StartDoneEventBox = new EventBox ();
+		//Button button = new Button("Start/Done");
+		//button.WidthRequest = 800;
+		//button.HeightRequest = 400;
+		//StartDoneEventBox.Add (button);
+		//StartDoneEventBox.ButtonPressEvent += new ButtonPressEventHandler(ButtonPressHandler);
+
+		Button button = new Button("Done");
+		button.WidthRequest = 800;
+		button.HeightRequest = 400;
+		button.Visible = false;
+		button.Name = TaskId.ToString();
+		button.Clicked += TaskDoneButtonClicked;
+
+		//if(useExpander) {
+
+		Expander expander = new Expander(TaskName);
+		expander.Show ();
+
+		expander.Add(button);
+
+		return expander;
+		//} else {
+		//	return button;
+		//}
+	}
+
+	private void ButtonPressHandler(object obj, ButtonPressEventArgs args) 
 	{
 		// single click
 		if (args.Event.Type == EventType.ButtonPress) {
@@ -168,9 +451,319 @@ public partial class MainWindow
 	}
 
 	/* Our usual callback function */
-	static void TaskStartDoneButtonClicked( object obj, EventArgs args)
+	void TaskDoneButtonClicked( object obj, EventArgs args)
 	{
+		//TIMER.Stop ();
+//		SoundPlayer simpleSound = new SoundPlayer (@"c:\Windows\Media\Alarm01.wav");
+//		simpleSound.Play();
+
 		Button button = (Button)obj;
 		Console.WriteLine("Hello again - cool button was pressed" + button.Name);
+
+//		if (!TaskGroupCurrentlyRunning) 
+//		{
+//			TaskGroupCurrentlyRunning = true;
+
+			//lock dropdown so that it cannot be changed
+			//combobox1.en
+
+			//Show cancel list run button
+
+			//change all button labels to say Done
+			/////ChangeTextForAllButtonsInExpander(vbox1, "Done");
+
+			//only allow the first task to be expanded
+			//Create Records in task run history
+			//Start Timer
+
+//			Expander expander = (Expander)button.Parent;
+//			string id = expander.Name;
+
+			int TaskId = 0;
+
+			if(int.TryParse(button.Name, out TaskId))
+			{
+				ActionResult<TaskRunHistory> historyResult = new TaskRunHistoryManager ().CompleteTask (TaskId);
+				TaskRunHistory history = historyResult.ReturnObject;
+				TaskRunHistory nextTask = new TaskRunHistoryManager ().FindNextOpenTask (history.TaskRunGroupHistoryId);
+				CurrentTaskRunHistory = nextTask;
+				if (nextTask != null) {
+					ShowButtonForTaskInExpander (vbox1, nextTask);
+				}
+				else
+				{				
+				TIMER.Enabled = false; //Stop Event Timer
+				ActionResult<TaskRunGroupHistory> historyGroupResult = new TaskRunGroupHistoryManager ().CompleteGroupTask (history.TaskRunGroupHistoryId);
+
+					//complete main tasks
+					//hide all tasks
+					//change cancel button
+				// show popup results
+				}
+			}
+//		}
+		//TIMER.Start();
 	}
+
+	private void ChangeTextForAllButtonsInExpander(VBox VBoxWitExpander, string TextToShow)
+	{
+		foreach (Widget w in VBoxWitExpander.AllChildren) 
+		{
+			Console.WriteLine (w.GetType ().ToString());
+			System.Type type = w.GetType ();
+			if (w.GetType ().Name == "Expander") 
+			{
+				Expander expander = (Expander)w;
+				foreach (Widget ExpanderChild in expander) 
+				{
+					if(ExpanderChild.GetType().Name == "Button")
+					{
+						Button ExpanderButton = (Button)ExpanderChild;
+						ExpanderButton.Label = TextToShow;
+					}
+				}
+				//Console.WriteLine (((Button)w).Label);
+			}
+		}
+	}
+
+	void FillTaskGroupComboBox (Gtk.ComboBox cb)
+	{
+		cb.Clear();
+		CellRendererText cell = new CellRendererText();
+		cb.PackStart(cell, false);
+		cb.AddAttribute(cell, "int", 0);
+		cb.AddAttribute(cell, "text", 1);
+		ListStore store = new ListStore(typeof(int), typeof (string));
+		cb.Model = store;
+
+		List<TaskGroup> Groups = new TaskGroupManager().FindAll ();
+		foreach (TaskGroup group in Groups) 
+		{
+			//this.combobox1.AppendText (group.Name);
+			store.AppendValues(group.Id, group.Name);
+		}
+
+
+
+//		store.AppendValues ("Hello");
+//		store.AppendValues ("Gtk");
+//		store.AppendValues ("ComboBox");
+	}
+
+	private void ShowButtonForFirstTaskInExpander(VBox VBoxWitExpander)
+	{
+		bool FirstBox = true;
+		foreach (Widget w in VBoxWitExpander.AllChildren) 
+		{
+			Console.WriteLine (w.GetType ().ToString());
+			System.Type type = w.GetType ();
+			if (w.GetType ().Name == "Expander") 
+			{
+				Expander expander = (Expander)w;
+				foreach (Widget ExpanderChild in expander) 
+				{
+					if(ExpanderChild.GetType().Name == "Button")
+					{
+						Button ExpanderButton = (Button)ExpanderChild;
+						if (FirstBox) {
+							ExpanderButton.Show ();
+							FirstBox = false;
+							expander.Expanded = true;
+
+							// Initialize a new instance of the SpeechSynthesizer.
+							SpeechSynthesizer synth = new SpeechSynthesizer();
+
+							// Configure the audio output. 
+							synth.SetOutputToDefaultAudioDevice();
+
+							// Speak a string.
+							synth.Speak(expander.Label);
+
+							synth.Dispose ();
+
+						} else {
+							ExpanderButton.Hide ();
+						}
+					}
+				}
+				//Console.WriteLine (((Button)w).Label);
+			}
+		}
+	}
+
+	private void ShowButtonForTaskInExpander(VBox VBoxWitExpander, TaskRunHistory task)
+	{
+		foreach (Widget w in VBoxWitExpander.AllChildren) 
+		{
+			Console.WriteLine (w.GetType ().ToString());
+			System.Type type = w.GetType ();
+			if (w.GetType ().Name == "Expander") 
+			{
+				Expander expander = (Expander)w;
+				foreach (Widget ExpanderChild in expander) 
+				{
+					if(ExpanderChild.GetType().Name == "Button")
+					{
+						int TaskId = 0;
+						Button ExpanderButton = (Button)ExpanderChild;
+
+						if (int.TryParse (ExpanderButton.Name, out TaskId)) {
+							if (TaskId == task.Id) {
+								expander.Expanded = true;
+								ExpanderButton.Show ();
+
+								// Initialize a new instance of the SpeechSynthesizer.
+								SpeechSynthesizer synth = new SpeechSynthesizer();
+
+								// Configure the audio output. 
+								synth.SetOutputToDefaultAudioDevice();
+
+								// Speak a string.
+								synth.Speak(expander.Label);
+
+								synth.Dispose ();
+
+							} else {
+								expander.Expanded = false;
+								ExpanderButton.Hide ();
+							}
+						}
+					}
+				}
+				//Console.WriteLine (((Button)w).Label);
+			}
+		}
+	}
+
+//	public void Timer()
+//	{
+//		
+//
+//		Thread.CurrentThread.Priority = ThreadPriority.Highest;
+//
+//		TIMER = new Timers.Timer();
+//		TIMER.Interval = Interval;
+//		TIMER.Elapsed += new ElapsedEventHandler(MS_Calc);
+//		TIMER.AutoReset = true;
+//		TIMER.Enabled = true; //Start Event Timer
+//		TotalRunTime.Start(); //Start Total Time Stopwatch;
+//
+//		while (true)
+//		{
+//			Thread.Sleep(Interval * 5);
+//			Console.Clear();
+//			PrintAtPos(2, "Missed Events " + (((TotalRunTime.ElapsedMilliseconds / Interval) - TotalCycles).ToString()));
+//
+//		}
+//	}
+
+	public void UpdateScreenTimer(object source, System.Timers.ElapsedEventArgs E)// public void MS_Calc(object source, ElapsedEventArgs E)
+	{
+		Gdk.Threads.Enter ();
+		//TIMER.Stop ();
+		//do stuff
+		TimeSpan span = FinalCompletionDateTime - DateTime.Now;
+		Console.WriteLine (span);
+		//TimerLabel.Text = (span).ToString ();
+
+		Gtk.Application.Invoke(delegate {
+			TimerLabel.Text = (span).ToString ();
+		});
+		//vbox1.QueueDraw ();
+		//TIMER.Start();
+		Gdk.Threads.Leave ();
+
+
+
+	}
+
+	public void GiveWarnings(object source, System.Timers.ElapsedEventArgs E)
+	{
+		
+		if (CurrentTaskRunHistory.CalculatedCompletionTime <= DateTime.Now) {
+			Console.WriteLine ("Zoe move on to next task.");
+
+			// Initialize a new instance of the SpeechSynthesizer.
+			SpeechSynthesizer synth = new SpeechSynthesizer();
+
+			// Configure the audio output. 
+			synth.SetOutputToDefaultAudioDevice();
+
+			// Speak a string.
+			synth.Speak("Late");
+
+			synth.Dispose ();
+
+			//SpeechSynthesizerManager.Speak ("Out of time.  Click done and move to the next task.");
+
+//			//			if (!WarningPlayed) {
+//							SoundPlayer simpleSound = new SoundPlayer (@"c:\Windows\Media\Windows Ringin.wav");
+//							simpleSound.Play ();
+//							simpleSound.Dispose ();
+//			//			}
+//			//			simpleSound.Play();
+//			//			simpleSound.Play();
+		} else if (CurrentTaskRunHistory.CalculatedCompletionTime.AddMinutes (-1) <= DateTime.Now) {
+			Console.WriteLine ("One Minute Left");
+
+
+			// Initialize a new instance of the SpeechSynthesizer.
+			SpeechSynthesizer synth = new SpeechSynthesizer();
+
+			// Configure the audio output. 
+			synth.SetOutputToDefaultAudioDevice();
+
+			// Speak a string.
+			synth.Speak("One Minute Left");
+
+			synth.Dispose ();
+
+
+			//SpeechSynthesizerManager.Speak ("You have one minute to finish");
+
+
+//			//			if (!WarningPlayed) {
+//							SoundPlayer simpleSound = new SoundPlayer (@"c:\Windows\Media\Ring02.wav");
+//							simpleSound.Play ();
+//							simpleSound.Dispose ();
+//			//				WarningPlayed = true;
+//			//			}
+		}
+	}
+
+//	public static void Refresh(DependencyObject obj)
+//
+//	{
+//
+//		obj.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle,
+//
+//			(NoArgDelegate)delegate { });
+//
+//	}
+
+	public void ComboBoxChangedEvent(object sender, EventArgs e)
+	{
+		List<Task> Tasks = new TaskManager ().FindByTaskGroup (GetComboBoxSelectedId ());
+		foreach (Task task in Tasks) 
+		{
+			//vboxWithExpander.PackStart (createTaskExpander (task.Name, "Short Description"), false, false, 0);
+			//vbox1.PackStart (createTaskExpander (task.Id, task.Name, "Short Description"), false, false, 0);
+			vbox1.PackStart(ShowStockTaskExpander(task.Id, task.Name, "Short Description"), false, false, 0);
+		}
+	}
+
+	private int GetComboBoxSelectedId()
+	{
+		int SelectedTaskGroupId = 0;
+
+		TreeIter iter;
+		if (combobox1.GetActiveIter (out iter)) 
+		{
+			//Console.WriteLine ((int)combobox1.Model.GetValue (iter, 0));
+			SelectedTaskGroupId = (int)combobox1.Model.GetValue (iter, 0);
+		}
+		return SelectedTaskGroupId;
+	}
+
 }
